@@ -6,7 +6,6 @@ const cleanCSS = require('clean-css');
 
 // Direktori sumber dan tujuan
 const srcDir = path.join(__dirname, '../newluarsekolah/assets-front');
-// const distDir = path.join(__dirname, '../newluarsekolah/assets-dist');
 const distDir = path.join(__dirname, 'dist');
 
 // Fungsi untuk menghapus isi folder
@@ -29,7 +28,10 @@ emptyDir(distDir);
 
 // Fungsi untuk minify file JS
 const minifyJS = (srcPath, distPath) => {
-    const result = uglifyJS.minify(fs.readFileSync(srcPath, 'utf8'));
+    const result = uglifyJS.minify(fs.readFileSync(srcPath, 'utf8'), {
+        compress: true, // Aktifkan kompresi
+        mangle: true // Aktifkan penggantian nama variabel
+    });
     if (result.error) {
         console.error(`Error minifying ${srcPath}:`, result.error);
     } else {
@@ -40,7 +42,9 @@ const minifyJS = (srcPath, distPath) => {
 
 // Fungsi untuk minify file CSS
 const minifyCSS = (srcPath, distPath) => {
-    const result = new cleanCSS({}).minify([srcPath]);
+    const result = new cleanCSS({
+        level: 2 // Tingkatkan level kompresi
+    }).minify([srcPath]);
     if (result.errors.length) {
         console.error(`Error minifying ${srcPath}:`, result.errors);
     } else {
