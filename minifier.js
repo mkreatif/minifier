@@ -27,26 +27,6 @@ const emptyDir = (dirPath) => {
 // Hapus isi folder dist
 emptyDir(distDir);
 
-// Fungsi untuk menyalin folder font
-const copyFolderRecursiveSync = (src, dest) => {
-    if (!fs.existsSync(src)) {
-        return;
-    }
-    if (!fs.existsSync(dest)) {
-        fs.mkdirSync(dest, { recursive: true });
-    }
-    const items = fs.readdirSync(src);
-    items.forEach(item => {
-        const srcPath = path.join(src, item);
-        const destPath = path.join(dest, item);
-        if (fs.lstatSync(srcPath).isDirectory()) {
-            copyFolderRecursiveSync(srcPath, destPath);
-        } else {
-            fs.copyFileSync(srcPath, destPath);
-        }
-    });
-};
-
 // Fungsi untuk minify file JS
 const minifyJS = (srcPath, distPath) => {
     const result = uglifyJS.minify(fs.readFileSync(srcPath, 'utf8'));
@@ -98,14 +78,6 @@ const readDirectory = (currentPath) => {
                 }
                 minifyCSS(fullPath, distPath);
                 hasMinifiableFile = true;
-            } else if (/\.(woff2?|ttf|otf|eot|svg)$/.test(item)) {
-                const distDirPath = path.dirname(distPath);
-                if (!fs.existsSync(distDirPath)) {
-                    fs.mkdirSync(distDirPath, { recursive: true });
-                }
-                fs.copyFileSync(fullPath, distPath);
-                console.log(`Copied font file ${fullPath} to ${distPath}`);
-                hasMinifiableFile = true;
             }
         }
     });
@@ -113,19 +85,5 @@ const readDirectory = (currentPath) => {
     return hasMinifiableFile;
 };
 
-// Fungsi utama untuk memulai proses minifikasi hanya pada folder css dan js
-const startMinification = () => {
-    const cssDir = path.join(srcDir, 'css');
-    const jsDir = path.join(srcDir, 'js');
-
-    if (fs.existsSync(cssDir) && fs.statSync(cssDir).isDirectory()) {
-        readDirectory(cssDir);
-    }
-
-    if (fs.existsSync(jsDir) && fs.statSync(jsDir).isDirectory()) {
-        readDirectory(jsDir);
-    }
-};
-
-// Mulai proses minifikasi
-startMinification();
+// Memulai proses minifikasi dari direktori sumber
+readDirectory(srcDir);
