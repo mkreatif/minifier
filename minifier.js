@@ -82,7 +82,7 @@ const readDirectory = (currentPath) => {
         }
         minifyJS(fullPath, distPath);
         hasMinifiableFile = true;
-      } else if (item.endsWith(".css")) {
+      } else if (item.endsWith(".css") && !item.endsWith(".min.css")) {
         const distDirPath = path.dirname(distPath);
         if (!fs.existsSync(distDirPath)) {
           fs.mkdirSync(distDirPath, { recursive: true });
